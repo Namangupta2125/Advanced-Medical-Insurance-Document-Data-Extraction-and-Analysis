@@ -243,6 +243,14 @@
     </footer>
 
     <script>
+        windows.onload = ()=>{
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            if (currentTheme != 'dark'{
+                body.setAttribute('data-theme', 'dark');
+                toggleButton.className = 'fas fa-sun';
+            }
+        }
         function toggleTheme() {
             const body = document.body;
             const currentTheme = body.getAttribute('data-theme');
