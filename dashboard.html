@@ -3,433 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Performance Metrics Dashboard</title>
-    <style>
-        :root {
-            --bg-primary: #ffffff;
-            --text-primary: #333333;
-            --border-color: #e2e8f0;
-            --slide-bg: #f8fafc;
-            --box-shadow: rgba(0, 0, 0, 0.1);
-            --button-bg: #3b82f6;
-            --button-hover: #2563eb;
-        }
-
-        [data-theme="dark"] {
-            --bg-primary: #1a1a1a;
-            --text-primary: #ffffff;
-            --border-color: #374151;
-            --slide-bg: #2d2d2d;
-            --box-shadow: rgba(255, 255, 255, 0.1);
-            --button-bg: #4f46e5;
-            --button-hover: #4338ca;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* Navigation Bar Styles */
-        .nav-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 1rem 2rem;
-            background-color: var(--bg-primary);
-            box-shadow: 0 2px 4px var(--box-shadow);
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            gap: 1rem;
-            z-index: 1000;
-        }
-
-        .nav-button {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            background-color: var(--button-bg);
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: background-color 0.3s, transform 0.2s;
-        }
-
-        .nav-button:hover {
-            background-color: var(--button-hover);
-            transform: translateY(-2px);
-        }
-
-        .nav-button:active {
-            transform: translateY(0);
-        }
-
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            z-index: 1000;
-            padding: 10px;
-            border-radius: 50%;
-            background-color: var(--slide-bg);
-            box-shadow: 0 2px 5px var(--box-shadow);
-        }
-
-        .slider-container {
-            width: 100vw;
-            height: 100vh;
-            position: relative;
-            overflow: hidden;
-            padding-top: 80px; /* Added to account for fixed nav bar */
-        }
-
-        .slide {
-            position: absolute;
-            width: 100%;
-            height: calc(100% - 80px); /* Adjusted for nav bar */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 2rem;
-            background-color: var(--slide-bg);
-            transform: translateX(100%);
-            transition: transform 0.5s ease-in-out;
-        }
-
-        .slide.active {
-            transform: translateX(0);
-        }
-
-        .slide-heading {
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            text-align: center;
-            color: var(--text-primary);
-        }
-
-        .image-area {
-            width: 80%;
-            height: 50%;
-            margin: 2rem 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            border-radius: 8px;
-            background-color: var(--bg-primary);
-            box-shadow: 0 4px 6px var(--box-shadow);
-        }
-
-        .image-area img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            transition: transform 0.3s ease;
-        }
-
-        .image-area img:hover {
-            transform: scale(1.02);
-        }
-
-        .description-box {
-            width: 80%;
-            height: 20%;
-            border: 2px solid var(--border-color);
-            padding: 1rem;
-            border-radius: 8px;
-            background-color: var(--bg-primary);
-            box-shadow: 0 4px 6px var(--box-shadow);
-        }
-
-        .slide-indicators {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            z-index: 1000;
-        }
-
-        .indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: var(--border-color);
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .indicator.active {
-            background-color: var(--text-primary);
-        }
-
-
-        .nav-bar {
-            display: none; /* Hide the original nav bar */
-        }
-
-        /* New floating menu styles */
-        .floating-menu {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            z-index: 1000;
-        }
-
-        .menu-buttons {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            transition: transform 0.3s ease;
-        }
-
-        .menu-button {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: var(--button-bg);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            position: relative;
-            transition: all 0.3s ease;
-            transform: translateX(-100px);
-            opacity: 0;
-        }
-
-        .menu-button span {
-            position: absolute;
-            left: 60px;
-            background-color: var(--bg-primary);
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            color: var(--text-primary);
-            font-weight: 600;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-            white-space: nowrap;
-            box-shadow: 0 2px 5px var(--box-shadow);
-        }
-
-        .menu-toggle {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: var(--button-bg);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            transition: transform 0.3s ease;
-        }
-
-        .floating-menu:hover .menu-button {
-            transform: translateX(0);
-            opacity: 1;
-        }
-
-        .floating-menu:hover .menu-button:nth-child(1) {
-            transition-delay: 0.1s;
-        }
-
-        .floating-menu:hover .menu-button:nth-child(2) {
-            transition-delay: 0.2s;
-        }
-
-        .floating-menu:hover .menu-button:nth-child(3) {
-            transition-delay: 0.3s;
-        }
-
-        .menu-button:hover span {
-            opacity: 1;
-        }
-
-        .menu-button:hover {
-            background-color: var(--button-hover);
-            transform: translateX(0) scale(1.1);
-        }
-
-        @media (max-width: 768px) {
-            .nav-bar {
-                padding: 1rem;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            .nav-button {
-                padding: 0.5rem 1rem;
-                font-size: 0.9rem;
-            }
-
-            .slide-heading {
-                font-size: 1.8rem;
-            }
-
-            .image-area {
-                width: 90%;
-            }
-
-            .description-box {
-                width: 90%;
-            }
-        }
-    </style>
+    <title>Healthcare Analytics Dashboard</title>
+    <link rel="stylesheet" href="dashbboard_styles.css">
 </head>
 <body>
-    <!-- <nav class="nav-bar">
-        <a href="path/to/homepage" class="nav-button">Home Page</a>
-        <a href="path/to/demo" class="nav-button">Try Demo</a>
-        <a href="path/to/innovation" class="nav-button">Innovation</a>
-    </nav> -->
-
-    <div class="floating-menu">
-        <div class="menu-buttons">
-            <button class="menu-button" onclick="window.location.href='./index.html'">
-                🏠
-                <span>Home Page</span>
-            </button>
-            <button class="menu-button" onclick="window.location.href='./extraction.html'">
-                🎮
-                <span>Try Demo</span>
-            </button>
-            <button class="menu-button" onclick="window.location.href='path/to/innovation'">
-                💡
-                <span>Innovation</span>
-            </button>
-        </div>
-    </div>
-
-    <button id="themeToggle" class="theme-toggle">🌞</button>
-
-    <div class="slider-container">
-        <div class="slide active" id="slide1">
-            <h1 class="slide-heading">Claim Accuracy Improvement</h1>
-            <div class="image-area">
-                <img src="./classification of diseasses.jpg" alt="Claim Accuracy Metrics" loading="lazy">
-            </div>
-            <div class="description-box"></div>
-        </div>
-
-        <div class="slide" id="slide2">
-            <h1 class="slide-heading">Processing Time Reduction</h1>
-            <div class="image-area">
-                <img src="./classification of diseasses.jpg" alt="Processing  Time Analytics" loading="lazy">
-            </div>
-            <div class="description-box"></div>
-        </div>
-
-        <div class="slide" id="slide3">
-            <h1 class="slide-heading">Cost Efficiency Gains</h1>
-            <div class="image-area">
-                <img src="./classification of diseasses.jpg" alt="Cost Efficiency Data" loading="lazy">
-            </div>
-            <div class="description-box"></div>
-        </div>
-
-        <div class="slide" id="slide4">
-            <h1 class="slide-heading">Data Quality Metrics</h1>
-            <div class="image-area">
-                <img src="./classification of diseasses.jpg" alt="Data Quality Statistics" loading="lazy">
-            </div>
-            <div class="description-box"></div>
-        </div>
-    </div>
-
-    <div class="slide-indicators">
-        <div class="indicator active"></div>
-        <div class="indicator"></div>
-        <div class="indicator"></div>
-        <div class="indicator"></div>
-    </div>
-
-    <script>
-        // Theme toggle functionality
-        const themeToggle = document.getElementById('themeToggle');
-        const html = document.documentElement;
+    <header>
+        <nav>
+            <!-- Home Button -->
+            <button id="homeBtn" class="nav-button" onclick="location.href='homepage.html'">Home</button>
         
-        // Check for saved theme preference
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        html.setAttribute('data-theme', savedTheme);
-        themeToggle.textContent = savedTheme === 'light' ? '🌞' : '🌙';
+            <!-- Try Demo Button -->
+            <button id="demoBtn" class="nav-button" onclick="location.href='extraction.html'">Try Demo</button>
+        
+            <!-- Innovation Button -->
+            <button id="innovationBtn" class="nav-button" onclick="location.href='innovation.html'">Innovation</button>
+        </nav>
+        
+    </header>
 
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            themeToggle.textContent = newTheme === 'light' ? '🌞' : '🌙';
-        });
+    <!-- image_upload.html -->
 
-        // Slider functionality
-        const slides = document.querySelectorAll('.slide');
-        const indicators = document.querySelectorAll('.indicator');
-        let currentSlide = 0;
-        const slideInterval = 5000; // 5 seconds
+        <button id="themeToggle" class="theme-toggle">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        </button>
 
-        function nextSlide() {
-            // Remove active class from current slide and indicator
-            slides[currentSlide].classList.remove('active');
-            indicators[currentSlide].classList.remove('active');
-            
-            // Calculate next slide index
-            currentSlide = (currentSlide + 1) % slides.length;
-            
-            // Add active class to next slide and indicator
-            slides[currentSlide].classList.add('active');
-            indicators[currentSlide].classList.add('active');
-        }
+        <div id="slide1" class="slide active">
+            <h1 class="slide-heading">AI Implementation Error Rates</h1>
+            <div class="chart-container">
+                <img src="Error Rate Comparision.png" alt="AI Implementation Error Rates Chart" class="chart-image">
+            </div>
+            <div class="description-box">
+                <p>AI implementation has reduced processing errors by 90%, improving overall healthcare delivery efficiency.</p>
+                <p class="data-source">Source: Healthcare Quality Metrics Report 2023</p>
+            </div>
+        </div>
 
-        // Start automatic sliding
-        let slideTimer = setInterval(nextSlide, slideInterval);
+        <div id="slide2" class="slide">
+            <h1 class="slide-heading">Administrative Cost Distribution</h1>
+            <div class="chart-container">
+                <img src="admimistrative cost .png" alt="Administrative Cost Distribution Chart" class="chart-image">
+            </div>
+            <div class="description-box">
+                <p>AI-driven automation has significantly reduced administrative overhead in healthcare operations.</p>
+                <p class="data-source">Source: Healthcare Financial Management Association Study 2023</p>
+            </div>
+        </div>
 
-        // Add click functionality to indicators
-        indicators.forEach((indicator, index) => {
-            indicator.addEventListener('click', () => {
-                // Clear the automatic sliding interval
-                clearInterval(slideTimer);
-                
-                // Remove active class from current slide and indicator
-                slides[currentSlide].classList.remove('active');
-                indicators[currentSlide].classList.remove('active');
-                
-                // Set new current slide
-                currentSlide = index;
-                
-                // Add active class to selected slide and indicator
-                slides[currentSlide].classList.add('active');
-                indicators[currentSlide].classList.add('active');
-                
-                // Restart automatic sliding
-                slideTimer = setInterval(nextSlide, slideInterval);
-            });
-        });
-    </script>
+        <div id="slide3" class="slide">
+            <h1 class="slide-heading">AI in Healthcare Market Growth</h1>
+            <div class="chart-container">
+                <img src="Market SIze growth FOr insurance document.png" alt="AI in Healthcare Market Growth Chart" class="chart-image">
+            </div>
+            <div class="description-box">
+                <p>The AI healthcare market shows exponential growth, projected to reach $17B by 2027.</p>
+                <p class="data-source">Source: Global Healthcare AI Market Analysis 2023</p>
+            </div>
+        </div>
+
+        <div id="slide4" class="slide">
+            <h1 class="slide-heading">Average Processing Time</h1>
+            <div class="chart-container">
+                <img src="Processing Time Comparision.png" alt="Average Processing Time Chart" class="chart-image">
+            </div>
+            <div class="description-box">
+                <p>AI implementation has reduced average processing time by 90%, improving patient care efficiency.</p>
+                <p class="data-source">Source: Healthcare Operations Efficiency Report 2023</p>
+            </div>
+        </div>
+
+        <!-- <div id="slide5" class="slide">
+            <h1 class="slide-heading">Patient Satisfaction Scores</h1>
+            <div class="chart-container">
+                <img src="/placeholder.svg?height=400&width=600" alt="Patient Satisfaction Scores Chart" class="chart-image">
+            </div>
+            <div class="description-box">
+                <p>Implementation of AI-driven healthcare systems showed a 25% increase in patient satisfaction scores.</p>
+                <p class="data-source">Source: HIMSS Annual Survey 2023</p>
+            </div>
+        </div> -->
+
+        <div id="slide6" class="slide">
+            <h1 class="slide-heading">Annual Cost Savings by Department</h1>
+            <div class="chart-container">
+                <img src="Cost Saving.png" alt="Annual Cost Savings by Department Chart" class="chart-image">
+            </div>
+            <div class="description-box">
+                <p>AI implementation resulted in significant cost savings across different healthcare departments.</p>
+                <p class="data-source">Source: McKinsey Global Institute Healthcare Analytics Report 2023</p>
+            </div>
+        </div>
+
+        <div class="slide-indicators">
+            <button class="indicator active" data-slide="0"></button>
+            <button class="indicator" data-slide="1"></button>
+            <button class="indicator" data-slide="2"></button>
+            <button class="indicator" data-slide="3"></button>
+            <button class="indicator" data-slide="4"></button>
+            <button class="indicator" data-slide="5"></button>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
 </body>
 </html>
