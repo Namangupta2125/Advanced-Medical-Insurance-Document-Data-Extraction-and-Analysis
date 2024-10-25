@@ -1,0 +1,224 @@
+:root {
+    --bg-primary: #ffffff;
+    --text-primary: #333333;
+    --border-color: #e2e8f0;
+    --slide-bg: #f8fafc;
+    --box-shadow: rgba(0, 0, 0, 0.1);
+    --button-bg: #3b82f6;
+    --button-hover: #2563eb;
+    --chart-blue: #4a90e2;
+    --chart-green: #82ca9d;
+    --chart-purple: #8884d8;
+}
+
+[data-theme="dark"] {
+    --bg-primary: #1a1a1a;
+    --text-primary: #ffffff;
+    --border-color: #374151;
+    --slide-bg: #2d2d2d;
+    --box-shadow: rgba(255, 255, 255, 0.1);
+    --button-bg: #4f46e5;
+    --button-hover: #4338ca;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    /* background-color: var(--bg-primary); */
+    padding: 1rem;
+    /* box-shadow: 0 2px 4px var(--box-shadow); */
+}
+
+nav {
+    display: flex;
+    justify-content: left;
+    gap: 1rem;
+}
+
+.nav-button {
+    padding: 0.5rem 1rem;
+    background-color: var(--button-bg);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.nav-button:hover {
+    background-color: var(--button-hover);
+}
+
+.floating-menu {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1000;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.menu-button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--button-bg);
+    border: none;
+    cursor: pointer;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateX(-100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.menu-button:hover {
+    background-color: var(--button-hover);
+}
+
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1000;
+    padding: 10px;
+    border-radius: 50%;
+    background-color: var(--slide-bg);
+    box-shadow: 0 2px 5px var(--box-shadow);
+}
+
+.slider-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    padding-top: 80px;
+}
+
+.slide {
+    position: absolute;
+    width: 100%;
+    height: calc(100% - 80px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    background-color: var(--slide-bg);
+    transform: translateX(100%);
+    transition: transform 0.5s ease-in-out;
+}
+
+.slide.active {
+    transform: translateX(0);
+}
+
+.chart-container {
+    width: 80%;
+    height: 400px;
+    margin: 2rem 0;
+    background-color: var(--bg-primary);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px var(--box-shadow);
+    border: 2px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chart-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.description-box {
+    width: 80%;
+    padding: 1.5rem;
+    border-radius: 8px;
+    background-color: var(--bg-primary);
+    box-shadow: 0 4px 6px var(--box-shadow);
+    border: 2px solid var(--border-color);
+}
+
+.data-source {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    opacity: 0.7;
+    margin-top: 0.5rem;
+    font-style: italic;
+}
+
+.slide-heading {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: var(--text-primary);
+}
+
+.slide-indicators {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 1000;
+}
+
+.indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--border-color);
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border: none;
+}
+
+.indicator.active {
+    background-color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+    .chart-container {
+        width: 95%;
+        height: 300px;
+    }
+
+    .slide-heading {
+        font-size: 1.8rem;
+    }
+
+    .description-box {
+        width: 95%;
+    }
+}
